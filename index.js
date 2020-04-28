@@ -7,6 +7,7 @@ const app = express()
 app.use(cors())
 
 app.get('/', async function (req, res) {
+  console.info(req.query.url)
   fetch(req.query.url)
     .then(async ({ body, ok, status, text }) => {
       if (ok) {
