@@ -1,6 +1,8 @@
 const express = require('express')
 const cors = require('cors')
-const fetch = require('node-fetch');
+const fetch = require('node-fetch')
+
+const { PORT = 2301 } = process.env
 
 const app = express()
 
@@ -18,6 +20,6 @@ app.get('/', async function (req, res) {
     })
 })
 
-app.listen(2301, function () {
+app.listen(PORT, function () {
   console.log('CORS-enabled web server listening on port 2301')
 })
