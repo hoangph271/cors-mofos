@@ -9,15 +9,19 @@ const app = express()
 app.use(cors())
 
 app.get('/', async function (req, res) {
-  console.info(req.query.url)
-  fetch(req.query.url)
-    .then(async ({ body, ok, status, text }) => {
-      if (ok) {
-        body.pipe(res);
-      } else {
-        res.status(status).send(await text())
-      }
-    })
+  const { url } = req.query
+
+  if (url) {
+    const { body, ok, status, text } = await fetch(url)
+
+    if (ok) {
+      body.pipe(res);
+    } else {
+      res.status(status).send(await text())
+    }
+  } else {
+    res.sendStatus(200)
+  }
 })
 
 app.listen(PORT, function () {
