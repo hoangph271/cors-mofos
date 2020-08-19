@@ -21,5 +21,5 @@ app.get('/', async function (req, res) {
 })
 
 app.listen(PORT, function () {
-  console.log('CORS-enabled web server listening on port 2301')
+  console.log(`CORS-enabled web server listening on port ${PORT}`)
 })
