@@ -2,28 +2,40 @@ const express = require('express')
 const cors = require('cors')
 const fetch = require('node-fetch')
 
-const { PORT = 2301 } = process.env
+const {
+  PORT = 8080,
+  DEFAULT_PORT = 80,
+  DEFAULT_HOST = '143.198.215.23'
+} = process.env
 
 const app = express()
 
 app.use(cors())
 
-app.get('/', async function (req, res) {
-  const { url } = req.query
+app.all('*', async (req, res) => {
+  const { method, headers, body, url } = req
+  const { port = DEFAULT_PORT, host = DEFAULT_HOST } = req.query
 
-  if (url) {
-    const { body, ok, status, text } = await fetch(url)
+  try {
+    console.info(`${method}: http://${host}:${port}${url}`)
+    const fetchRes = await fetch(`http://${host}:${port}${url}`, {
+      method,
+      headers,
+      body
+    })
 
-    if (ok) {
-      body.pipe(res);
+    if (fetchRes.ok) {
+      fetchRes.body.pipe(res)
     } else {
-      res.status(status).send(await text())
+      res.status(fetchRes.status).send(await fetchRes.text())
     }
-  } else {
-    res.sendStatus(200)
+  } catch (error) {
+    console.info(`fetch failed: http://${host}:${port}`)
+    console.error(error)
+    return res.status(500).send(error.message)
   }
 })
 
 app.listen(PORT, function () {
-  console.log(`CORS-enabled web server listening on port ${PORT}`)
+  console.log(`CORS-enabled web server listening on http://localhost:${PORT}`)
 })
