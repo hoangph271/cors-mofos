@@ -1,29 +1,26 @@
 const express = require('express')
 const cors = require('cors')
-const fetch = require('node-fetch')
+const { createProxyMiddleware } = require('http-proxy-middleware')
 
-const { PORT = 2301 } = process.env
+const {
+  PORT = 2301,
+  SERVER_IP = '127.0.0.1'
+} = process.env
 
 const app = express()
 
 app.use(cors())
-
-app.get('/', async function (req, res) {
-  const { url } = req.query
-
-  if (url) {
-    const { body, ok, status, text } = await fetch(url)
-
-    if (ok) {
-      body.pipe(res);
-    } else {
-      res.status(status).send(await text())
-    }
-  } else {
-    res.sendStatus(200)
+app.use('/:port/', (req, res, next) => {
+  if (!Number.parseInt(req.params.port, 10)) {
+    return res.status(400).send('Invalid PORT number')
   }
+
+  createProxyMiddleware({
+    target: `http://${SERVER_IP}:${req.params.port}`,
+    changeOrigin: true
+  })(req, res, next)
 })
 
 app.listen(PORT, function () {
-  console.log(`CORS-enabled web server listening on port ${PORT}`)
+  console.log(`Started: http://localhost:${PORT}`)
 })
