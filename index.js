@@ -12,6 +12,7 @@ const app = express()
 app.use(cors('*'))
 app.use((req, res, next) => {
   createProxyMiddleware({
+    ws: true,
     target: SERVER,
     changeOrigin: true
   })(req, res, next)
