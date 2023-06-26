@@ -4,7 +4,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware')
 
 const {
   PORT = 2301,
-  // SERVER = 'http://127.0.0.1:8000'
+  SERVER = 'http://127.0.0.1:8000'
 } = process.env
 
 const app = express()
@@ -13,7 +13,7 @@ app.use(cors('*'))
 app.use((req, res, next) => {
   createProxyMiddleware({
     ws: true,
-    // target: SERVER,
+    target: req.query.target ?? SERVER,
     changeOrigin: true
   })(req, res, next)
 })
