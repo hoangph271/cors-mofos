@@ -7,6 +7,6 @@ Deloy the server & make CORS request as following:
 Instead of  
 ```https://pokeapi.co/api/v2/ability/150/```  
 Do this:  
-```https://cors-mofos.herokuapp.com/?url=https://pokeapi.co/api/v2/ability/150/```  
+```https://cors-mofos.vercel.app?url=https://pokeapi.co/api/v2/ability/150/```  
 
 (Simply put the target API URL in the ```url``` query)
