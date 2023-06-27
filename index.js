@@ -1,27 +1,30 @@
 const express = require('express')
 const cors = require('cors')
-const { createProxyMiddleware } = require('http-proxy-middleware')
+const bodyParser = require('body-parser')
 
 const { PORT = 2301 } = process.env
+
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
 const app = express()
 
 app.use(cors('*'))
-app.use((req, res, next) => {
-  const { target } = req.query
 
-  if (!target) return res
-    .status(400)
-    .send('`target` is required')
+app.use(bodyParser.json(), async (req, res) => {
+  const url = `https://cosmos.apps.res.rwe.com/gw${req.url}`
 
-  createProxyMiddleware({
-    ws: true,
-    target,
-    changeOrigin: true,
-    secure: false,
-  })(req, res, next)
+  delete req.headers.host
 
-  console.info(req.method)
+  const json = await fetch(
+    url,
+    {
+      method: req.method,
+      headers: req.headers,
+      body: ['PUT'].includes(req.method) ? JSON.stringify(req.body) : undefined,
+    }
+  ).then(res => res.json())
+
+  res.json(json)
 })
 
 app.listen(PORT, function () {
