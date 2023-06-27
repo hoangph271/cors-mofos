@@ -17,8 +17,11 @@ app.use((req, res, next) => {
   createProxyMiddleware({
     ws: true,
     target,
-    changeOrigin: true
+    changeOrigin: true,
+    secure: false,
   })(req, res, next)
+
+  console.info(req.method)
 })
 
 app.listen(PORT, function () {
