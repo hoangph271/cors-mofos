@@ -2,18 +2,27 @@ const express = require('express')
 const cors = require('cors')
 const { createProxyMiddleware } = require('http-proxy-middleware')
 
-const {
-  PORT = 2301,
-  SERVER = 'http://127.0.0.1:8000'
-} = process.env
+const { PORT = 2301 } = process.env
 
 const app = express()
 
 app.use(cors('*'))
 app.use((req, res, next) => {
+  const { target, server } = req.query
+
+  if (!target) return res
+    .status(400)
+    .send('`target` is required')
+
+  // const server = new URL(target).origin
+
+  // if (!server) return res
+  //   .status(400)
+  //   .send('`server` is required')
+
   createProxyMiddleware({
     ws: true,
-    target: req.query.target ?? SERVER,
+    target,
     changeOrigin: true
   })(req, res, next)
 })
