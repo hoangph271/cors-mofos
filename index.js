@@ -8,17 +8,11 @@ const app = express()
 
 app.use(cors('*'))
 app.use((req, res, next) => {
-  const { target, server } = req.query
+  const { target } = req.query
 
   if (!target) return res
     .status(400)
     .send('`target` is required')
-
-  // const server = new URL(target).origin
-
-  // if (!server) return res
-  //   .status(400)
-  //   .send('`server` is required')
 
   createProxyMiddleware({
     ws: true,
