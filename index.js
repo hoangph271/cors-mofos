@@ -15,16 +15,22 @@ app.use(bodyParser.json(), async (req, res) => {
 
   delete req.headers.host
 
-  const json = await fetch(
+  const cosmosRes = await fetch(
     url,
     {
       method: req.method,
       headers: req.headers,
       body: ['PUT'].includes(req.method) ? JSON.stringify(req.body) : undefined,
     }
-  ).then(res => res.json())
+  )
 
-  res.json(json)
+  if (cosmosRes.status === 200) {
+    res.json(await cosmosRes.json())
+  } else {
+    res
+      .status(cosmosRes.status)
+      .send(await cosmosRes.text())
+  }
 })
 
 app.listen(PORT, function () {
