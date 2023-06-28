@@ -15,12 +15,18 @@ app.use(bodyParser.json(), async (req, res) => {
 
   delete req.headers.host
 
+  const needsBody = ['PUT'].includes(req.method)
+  const bodyStr = JSON.stringify(req.body);
+
   const cosmosRes = await fetch(
     url,
     {
       method: req.method,
-      headers: req.headers,
-      body: ['PUT'].includes(req.method) ? JSON.stringify(req.body) : undefined,
+      headers: {
+        ...req.headers,
+        ...(needsBody && { 'Content-Length': new TextEncoder().encode(bodyStr).length })
+      },
+      body: needsBody ? bodyStr : undefined,
     }
   )
 
