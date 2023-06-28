@@ -10,13 +10,12 @@ const app = express()
 
 app.use(cors('*'))
 
-app.use(bodyParser.json(), async (req, res) => {
+app.use(bodyParser.text({ type: '*/*' }), async (req, res) => {
   const url = `https://cosmos.apps.res.rwe.com${req.url}`
 
   delete req.headers.host
 
-  const needsBody = ['PUT'].includes(req.method)
-  const bodyStr = JSON.stringify(req.body);
+  const needsBody = ['PUT', 'POST'].includes(req.method)
 
   const cosmosRes = await fetch(
     url,
@@ -24,9 +23,8 @@ app.use(bodyParser.json(), async (req, res) => {
       method: req.method,
       headers: {
         ...req.headers,
-        ...(needsBody && { 'Content-Length': new TextEncoder().encode(bodyStr).length })
       },
-      body: needsBody ? bodyStr : undefined,
+      body: needsBody ? req.body : undefined,
     }
   )
 
