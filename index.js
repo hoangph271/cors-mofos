@@ -11,7 +11,7 @@ const app = express()
 app.use(cors('*'))
 
 app.use(bodyParser.text({ type: '*/*' }), async (req, res) => {
-  const url = `https://cosmos.apps.res.rwe.com${req.url}`
+  const url = `https://cosmos-test.ext.np.renewables-apps.com${req.url}`
 
   delete req.headers.host
 
