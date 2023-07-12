@@ -28,12 +28,17 @@ app.use(bodyParser.text({ type: '*/*' }), async (req, res) => {
     }
   )
 
-  if (cosmosRes.status === 200) {
-    res.json(await cosmosRes.json())
-  } else {
-    res
-      .status(cosmosRes.status)
-      .send(await cosmosRes.text())
+  try {
+    if (cosmosRes.status === 200) {
+      res.json(await cosmosRes.json())
+    } else {
+      res
+        .status(cosmosRes.status)
+        .send(await cosmosRes.text())
+    }
+  } catch (error) {
+    console.error(error);
+    console.error(await cosmosRes.text())
   }
 })
 
