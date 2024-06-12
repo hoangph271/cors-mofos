@@ -10,26 +10,34 @@ const app = express()
 
 app.use(cors('*'))
 
-app.use(bodyParser.text({ type: '*/*' }), async (req, res) => {
+const jsonParser = bodyParser.text({ type: 'application/json' })
+
+function parseBodyMiddleware (req, res, next) {
+  if (req.headers['content-type'] === 'application/json') {
+    return jsonParser(req, res, next)
+  }
+
+  next()
+}
+
+app.use(parseBodyMiddleware, async (req, res) => {
   const url = `https://cosmos-test.ext.np.renewables-apps.com${req.url}`
 
   delete req.headers.host
 
-  const needsBody = ['PUT', 'POST'].includes(req.method)
-
-  const cosmosRes = await fetch(
-    url,
-    {
-      method: req.method,
-      headers: {
-        ...req.headers,
-      },
-      body: needsBody ? req.body : undefined,
-    }
-  )
-
   try {
-    if (cosmosRes.status === 200) {
+    const cosmosRes = await fetch(
+      url,
+      {
+        method: req.method,
+        headers: {
+          ...req.headers,
+        },
+        body: req.body,
+      }
+    )
+
+    if (cosmosRes.ok) {
       res.json(await cosmosRes.json())
     } else {
       res
@@ -38,7 +46,6 @@ app.use(bodyParser.text({ type: '*/*' }), async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    console.error(await cosmosRes.text())
   }
 })
 
