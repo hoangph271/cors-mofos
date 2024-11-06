@@ -8,7 +8,7 @@ Instead of
 ```https://pokeapi.co/api/v2/ability/150/```  
 Do this:  
 ```
-https://cors-mofos.vercel.app?target=https://pokeapi.co/api/v2/ability/150/
+https://cors-mofos-six.vercel.app?target=https://pokeapi.co/api/v2/ability/150/
 ````  
 
 (Simply put the target API URL in the ```target``` query)
